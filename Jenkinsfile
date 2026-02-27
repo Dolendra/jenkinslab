@@ -27,7 +27,9 @@ pipeline {
 
         stage('Push Docker Image') {
             steps {
-                sh 'docker push dolendra/my-k8s-app:${BUILD_NUMBER}'
+                withDockerRegistry([credentialsId: 'dockerhub-creds', url: '']) {
+                    sh "docker push dolendra/my-k8s-app:${BUILD_NUMBER}"
+                }
             }
         }
        
