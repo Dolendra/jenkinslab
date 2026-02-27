@@ -6,7 +6,7 @@ pipeline {
         stage('Checkout from GitHub') {
             steps {
                 git branch: 'master',
-                    url: 'https://github.com/laxmi916/node-k8s-app.git'
+                    url: 'https://github.com/Dolendra/jenkinslab.git'
             }
         }
 
@@ -20,14 +20,14 @@ pipeline {
             steps {
                 sh '''
                 docker build -t my-k8s-app:${BUILD_NUMBER} .
-                docker tag my-k8s-app:${BUILD_NUMBER} laxmi916/my-k8s-app:${BUILD_NUMBER}
+                docker tag my-k8s-app:${BUILD_NUMBER} dolendra/my-k8s-app:${BUILD_NUMBER}
                 '''
             }
         }
 
         stage('Push Docker Image') {
             steps {
-                sh 'docker push laxmi916/my-k8s-app:${BUILD_NUMBER}'
+                sh 'docker push dolendra/my-k8s-app:${BUILD_NUMBER}'
             }
         }
 
@@ -41,21 +41,6 @@ pipeline {
         '''
     }
 }
-
-        stage('Deploy to Kubernetes') {
-            steps {
-                sh '''
-                # Replace image tag inside deployment.yaml
-                sed -i "s/IMAGE_TAG/${BUILD_NUMBER}/g" k8s/deployment.yaml
-
-                # Load image into Minikube
-                minikube image load laxmi916/my-k8s-app:${BUILD_NUMBER}
-
-                # Apply manifests
-                minikube kubectl -- apply -f k8s/deployment.yaml
-                minikube kubectl -- apply -f k8s/service.yaml
-                '''
-            }
         }
     }
 }
